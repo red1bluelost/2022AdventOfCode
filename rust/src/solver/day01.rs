@@ -2,15 +2,15 @@ use crate::problem::{Solution, SolverImpl};
 use std::io;
 
 #[derive(Default)]
-pub struct Day1Impl {}
+pub struct Day01Impl {}
 
-impl Day1Impl {
+impl Day01Impl {
     pub fn new() -> Self {
         Default::default()
     }
 }
 
-impl SolverImpl for Day1Impl {
+impl SolverImpl for Day01Impl {
     fn solve(self, mut r: impl io::BufRead) -> io::Result<Solution> {
         let mut v = vec![0];
 

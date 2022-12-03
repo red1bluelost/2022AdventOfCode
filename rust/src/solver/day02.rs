@@ -1,5 +1,5 @@
 use crate::problem::{Solution, SolverImpl};
-use crate::solver::day2::Moves::{Paper, Rock, Scissors};
+use crate::solver::day02::Moves::{Paper, Rock, Scissors};
 use std::io;
 
 #[derive(Eq, PartialEq, Debug, Copy, Clone)]
@@ -97,15 +97,15 @@ impl From<char> for Moves {
 }
 
 #[derive(Default)]
-pub struct Day2Impl {}
+pub struct Day02Impl {}
 
-impl Day2Impl {
+impl Day02Impl {
     pub fn new() -> Self {
         Default::default()
     }
 }
 
-impl SolverImpl for Day2Impl {
+impl SolverImpl for Day02Impl {
     fn solve(self, r: impl io::BufRead) -> io::Result<Solution> {
         let chars: Vec<(char, char)> = r
             .lines()
