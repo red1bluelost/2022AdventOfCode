@@ -1,18 +1,21 @@
 mod day01;
 mod day02;
 mod day03;
+mod day04;
 
 use crate::problem;
 use crate::problem::SolverImpl;
 use day01::Day01Impl;
 use day02::Day02Impl;
 use day03::Day03Impl;
+use day04::Day04Impl;
 use std::io;
 
 pub enum Solver {
     Day01(Day01Impl),
     Day02(Day02Impl),
     Day03(Day03Impl),
+    Day04(Day04Impl),
 }
 
 impl Solver {
@@ -22,6 +25,7 @@ impl Solver {
             1 => Day01(Day01Impl::new()),
             2 => Day02(Day02Impl::new()),
             3 => Day03(Day03Impl::new()),
+            4 => Day04(Day04Impl::new()),
             _ => todo!(),
         }
     }
@@ -32,6 +36,7 @@ impl Solver {
             Day01(solver_impl) => solver_impl.solve(r),
             Day02(solver_impl) => solver_impl.solve(r),
             Day03(solver_impl) => solver_impl.solve(r),
+            Day04(solver_impl) => solver_impl.solve(r),
         }
     }
 }
