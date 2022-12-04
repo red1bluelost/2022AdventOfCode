@@ -11,20 +11,19 @@ impl Day03Impl {
     }
 }
 
-fn to_priority(&c: &u8) -> i64 {
-    if c <= b'Z' {
-        (c - b'A' + 27) as i64
-    } else {
-        (c - b'a' + 1) as i64
-    }
-}
-
 impl SolverImpl for Day03Impl {
     fn solve(self, r: impl io::BufRead) -> io::Result<Solution> {
         let lines: Vec<Vec<i64>> = r
             .lines()
             .flatten()
-            .map(|l| l.trim().as_bytes().iter().map(to_priority).collect())
+            .map(|l| {
+                l.trim()
+                    .as_bytes()
+                    .iter()
+                    .cloned()
+                    .map(|c| (c - if c.is_ascii_uppercase() { 38 } else { 96 }).into())
+                    .collect()
+            })
             .collect();
 
         let part1 = lines
