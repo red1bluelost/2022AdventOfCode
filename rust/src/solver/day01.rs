@@ -11,23 +11,14 @@ impl Day01Impl {
 }
 
 impl SolverImpl for Day01Impl {
-    fn solve(self, mut r: impl io::BufRead) -> io::Result<Solution> {
+    fn solve(self, r: impl io::BufRead) -> io::Result<Solution> {
         let mut v = vec![0];
 
-        let mut buf = String::new();
-        loop {
-            buf.clear();
-            let s = r.read_line(&mut buf)?;
-            match s {
-                0 => {
-                    break;
-                }
-                1 => {
-                    v.push(0);
-                }
-                _ => {
-                    *v.last_mut().unwrap() += buf.trim().parse::<u64>().unwrap();
-                }
+        for line in r.lines().flatten() {
+            if line.is_empty() {
+                v.push(0);
+            } else {
+                *v.last_mut().unwrap() += line.trim().parse::<u64>().unwrap();
             }
         }
 

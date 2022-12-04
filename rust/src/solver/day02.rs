@@ -107,27 +107,27 @@ impl Day02Impl {
 
 impl SolverImpl for Day02Impl {
     fn solve(self, r: impl io::BufRead) -> io::Result<Solution> {
-        let chars: Vec<(char, char)> = r
+        let chars: Vec<[char; 2]> = r
             .lines()
-            .map(|l| {
-                l.unwrap()
-                    .split_whitespace()
-                    .map(|c| c.chars().next().unwrap().to_owned())
+            .flatten()
+            .flat_map(|l| {
+                l.split_whitespace()
+                    .flat_map(|c| c.chars().next())
                     .collect::<Vec<char>>()
+                    .try_into()
             })
-            .map(|chars| (chars[0], chars[1]))
             .collect();
 
         let part1 = chars
             .iter()
-            .map(|&(f, s)| (Moves::from(f), Moves::from(s)))
+            .map(|&[f, s]| (Moves::from(f), Moves::from(s)))
             .map(|(o, y)| y.play(o) + y.to_shape_score())
             .sum::<i64>()
             .to_string();
 
         let part2 = chars
             .iter()
-            .map(|&(f, s)| (Moves::from(f), MatchResult::from(s)))
+            .map(|&[f, s]| (Moves::from(f), MatchResult::from(s)))
             .map(|(o, r)| r.score() + o.other_move(r.opposite()).to_shape_score())
             .sum::<i64>()
             .to_string();

@@ -21,17 +21,17 @@ fn to_priority(&c: &u8) -> i64 {
 
 impl SolverImpl for Day03Impl {
     fn solve(self, r: impl io::BufRead) -> io::Result<Solution> {
-        let lines: Vec<_> = r
+        let lines: Vec<Vec<i64>> = r
             .lines()
-            .map(|l| l.unwrap().trim().to_string().into_bytes())
+            .flatten()
+            .map(|l| l.trim().as_bytes().iter().map(to_priority).collect())
             .collect();
 
         let part1 = lines
             .iter()
             .map(|l| l.split_at(l.len() / 2))
-            .map(|(l, r)| {
-                let m = |s: &[u8]| -> HashSet<i64> { s.iter().map(to_priority).collect() };
-                (m(l), m(r))
+            .map(|(l, r)| -> (HashSet<i64>, HashSet<i64>) {
+                (l.iter().cloned().collect(), r.iter().cloned().collect())
             })
             .map(|(l, r)| l.intersection(&r).sum::<i64>())
             .sum::<i64>()
@@ -39,18 +39,16 @@ impl SolverImpl for Day03Impl {
 
         let part2 = lines
             .iter()
-            .map(|l| l.iter().map(to_priority).collect())
+            .map(|l| l.iter().cloned().collect())
             .collect::<Vec<HashSet<i64>>>()
             .chunks(3)
-            .map(|chunk| {
-                if let [p1, p2, p3] = chunk {
-                    p1.intersection(&p2.intersection(p3).into_iter().map(i64::clone).collect())
-                        .last()
-                        .unwrap()
-                        .clone()
-                } else {
-                    0
-                }
+            .map(|chunk| match chunk {
+                [p1, p2, p3] => p1
+                    .intersection(&p2.intersection(p3).into_iter().map(i64::clone).collect())
+                    .last()
+                    .unwrap()
+                    .clone(),
+                _ => 0,
             })
             .sum::<i64>()
             .to_string();

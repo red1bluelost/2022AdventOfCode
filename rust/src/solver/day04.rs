@@ -15,7 +15,7 @@ impl SolverImpl for Day04Impl {
     fn solve(self, r: impl io::BufRead) -> io::Result<Solution> {
         let lines: Vec<[i64; 4]> = r
             .lines()
-            .map(|line| {
+            .flat_map(|line| {
                 line.unwrap()
                     .split(',')
                     .flat_map(|p| p.split('-'))
@@ -23,7 +23,6 @@ impl SolverImpl for Day04Impl {
                     .collect::<Vec<i64>>()
                     .try_into()
             })
-            .flatten()
             .collect();
 
         let part1 = lines
