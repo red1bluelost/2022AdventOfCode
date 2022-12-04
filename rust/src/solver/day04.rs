@@ -13,8 +13,32 @@ impl Day04Impl {
 
 impl SolverImpl for Day04Impl {
     fn solve(self, r: impl io::BufRead) -> io::Result<Solution> {
-        let part1 = "TODO".to_string();
-        let part2 = "TODO".to_string();
+        let lines: Vec<[i64; 4]> = r
+            .lines()
+            .map(|line| {
+                line.unwrap()
+                    .split(',')
+                    .flat_map(|p| p.split('-'))
+                    .map(|s| s.parse().unwrap())
+                    .collect::<Vec<i64>>()
+                    .try_into()
+            })
+            .flatten()
+            .collect();
+
+        let part1 = lines
+            .iter()
+            .filter(|&&[a, b, c, d]| (a <= c && b >= d) || (c <= a && d >= b))
+            .count()
+            .to_string();
+
+        let part2 = lines
+            .iter()
+            .filter(|&&[a, b, c, d]| {
+                (a >= c && a <= d) || (b >= c && b <= d) || (c >= a && c <= b) || (d >= a && d <= b)
+            })
+            .count()
+            .to_string();
         Ok(Solution { part1, part2 })
     }
 }
