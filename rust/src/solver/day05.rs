@@ -104,7 +104,7 @@ fn parse_lines(lines: Vec<String>) -> (Boxes, Vec<Move>) {
     (parse_boxes(boxes), parse_moves(&moves[1..]))
 }
 
-pub fn solve(r: impl io::BufRead) -> io::Result<Solution> {
+pub(super) fn solve(r: impl io::BufRead) -> io::Result<Solution> {
     let (boxes, moves) = parse_lines(r.lines().collect::<io::Result<_>>()?);
 
     let part1 = boxes.clone().simulate_part1(&moves).tops();

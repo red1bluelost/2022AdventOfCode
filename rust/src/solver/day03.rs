@@ -3,7 +3,7 @@ use std::io;
 
 use crate::problem::Solution;
 
-pub fn solve(r: impl io::BufRead) -> io::Result<Solution> {
+pub(super) fn solve(r: impl io::BufRead) -> io::Result<Solution> {
     let lines: Vec<Vec<i64>> = r
         .lines()
         .flatten()

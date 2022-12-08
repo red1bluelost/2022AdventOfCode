@@ -15,7 +15,7 @@ fn run<const N: usize>(line: &str) -> usize {
         .add(N)
 }
 
-pub fn solve(r: impl BufRead) -> io::Result<Solution> {
+pub(super) fn solve(r: impl BufRead) -> io::Result<Solution> {
     let line = r.lines().nth(0).unwrap()?;
 
     let part1 = run::<4>(&line).to_string();

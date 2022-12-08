@@ -2,7 +2,7 @@ use std::io;
 
 use crate::problem::Solution;
 
-pub fn solve(r: impl io::BufRead) -> io::Result<Solution> {
+pub(super) fn solve(r: impl io::BufRead) -> io::Result<Solution> {
     let lines: Vec<[i64; 4]> = r
         .lines()
         .flat_map(|line| {

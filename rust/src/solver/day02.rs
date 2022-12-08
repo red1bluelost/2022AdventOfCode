@@ -97,7 +97,7 @@ impl From<char> for Moves {
     }
 }
 
-pub fn solve(r: impl io::BufRead) -> io::Result<Solution> {
+pub(super) fn solve(r: impl io::BufRead) -> io::Result<Solution> {
     let chars: Vec<[char; 2]> = r
         .lines()
         .flatten()

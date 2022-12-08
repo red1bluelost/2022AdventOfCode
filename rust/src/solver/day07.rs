@@ -179,7 +179,7 @@ impl FromStr for ShellLine {
     }
 }
 
-pub fn solve(r: impl io::BufRead) -> io::Result<Solution> {
+pub(super) fn solve(r: impl io::BufRead) -> io::Result<Solution> {
     let file_sys = Directory::build(r.lines().map(|l| l.unwrap().parse().unwrap()));
 
     let sizes: Vec<usize> = file_sys
