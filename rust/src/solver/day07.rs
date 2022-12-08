@@ -3,7 +3,7 @@ use std::io;
 use std::rc::{Rc, Weak};
 use std::str::FromStr;
 
-use crate::problem::{Solution, SolverImpl};
+use crate::problem::Solution;
 
 #[derive(Debug)]
 enum ShellLine {
@@ -179,38 +179,27 @@ impl FromStr for ShellLine {
     }
 }
 
-#[derive(Default)]
-pub struct Day07Impl {}
+pub fn solve(r: impl io::BufRead) -> io::Result<Solution> {
+    let file_sys = Directory::build(r.lines().map(|l| l.unwrap().parse().unwrap()));
 
-impl Day07Impl {
-    pub fn new() -> Self {
-        Default::default()
-    }
-}
+    let sizes: Vec<usize> = file_sys
+        .dir_iter()
+        .unwrap()
+        .map(|d| *d.size.borrow())
+        .collect();
 
-impl SolverImpl for Day07Impl {
-    fn solve(self, r: impl io::BufRead) -> io::Result<Solution> {
-        let file_sys = Directory::build(r.lines().map(|l| l.unwrap().parse().unwrap()));
+    let part1 = sizes
+        .iter()
+        .filter(|&&s| s <= 100_000)
+        .sum::<usize>()
+        .to_string();
 
-        let sizes: Vec<usize> = file_sys
-            .dir_iter()
-            .unwrap()
-            .map(|d| *d.size.borrow())
-            .collect();
-
-        let part1 = sizes
-            .iter()
-            .filter(|&&s| s <= 100_000)
-            .sum::<usize>()
-            .to_string();
-
-        let space_needed = 30_000_000 - (70_000_000 - *file_sys.size.borrow());
-        let part2 = sizes
-            .iter()
-            .filter(|&&s| s >= space_needed)
-            .min()
-            .unwrap()
-            .to_string();
-        Ok(Solution { part1, part2 })
-    }
+    let space_needed = 30_000_000 - (70_000_000 - *file_sys.size.borrow());
+    let part2 = sizes
+        .iter()
+        .filter(|&&s| s >= space_needed)
+        .min()
+        .unwrap()
+        .to_string();
+    Ok(Solution { part1, part2 })
 }

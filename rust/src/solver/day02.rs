@@ -1,6 +1,7 @@
-use crate::problem::{Solution, SolverImpl};
-use crate::solver::day02::Moves::{Paper, Rock, Scissors};
 use std::io;
+
+use crate::problem::Solution;
+use crate::solver::day02::Moves::{Paper, Rock, Scissors};
 
 #[derive(Eq, PartialEq, Debug, Copy, Clone)]
 enum MatchResult {
@@ -96,42 +97,31 @@ impl From<char> for Moves {
     }
 }
 
-#[derive(Default)]
-pub struct Day02Impl {}
+pub fn solve(r: impl io::BufRead) -> io::Result<Solution> {
+    let chars: Vec<[char; 2]> = r
+        .lines()
+        .flatten()
+        .flat_map(|l| {
+            l.split_whitespace()
+                .flat_map(|c| c.chars().next())
+                .collect::<Vec<char>>()
+                .try_into()
+        })
+        .collect();
 
-impl Day02Impl {
-    pub fn new() -> Self {
-        Default::default()
-    }
-}
+    let part1 = chars
+        .iter()
+        .map(|&[f, s]| (Moves::from(f), Moves::from(s)))
+        .map(|(o, y)| y.play(o) + y.to_shape_score())
+        .sum::<i64>()
+        .to_string();
 
-impl SolverImpl for Day02Impl {
-    fn solve(self, r: impl io::BufRead) -> io::Result<Solution> {
-        let chars: Vec<[char; 2]> = r
-            .lines()
-            .flatten()
-            .flat_map(|l| {
-                l.split_whitespace()
-                    .flat_map(|c| c.chars().next())
-                    .collect::<Vec<char>>()
-                    .try_into()
-            })
-            .collect();
+    let part2 = chars
+        .iter()
+        .map(|&[f, s]| (Moves::from(f), MatchResult::from(s)))
+        .map(|(o, r)| r.score() + o.other_move(r.opposite()).to_shape_score())
+        .sum::<i64>()
+        .to_string();
 
-        let part1 = chars
-            .iter()
-            .map(|&[f, s]| (Moves::from(f), Moves::from(s)))
-            .map(|(o, y)| y.play(o) + y.to_shape_score())
-            .sum::<i64>()
-            .to_string();
-
-        let part2 = chars
-            .iter()
-            .map(|&[f, s]| (Moves::from(f), MatchResult::from(s)))
-            .map(|(o, r)| r.score() + o.other_move(r.opposite()).to_shape_score())
-            .sum::<i64>()
-            .to_string();
-
-        Ok(Solution { part1, part2 })
-    }
+    Ok(Solution { part1, part2 })
 }
