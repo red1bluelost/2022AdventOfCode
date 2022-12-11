@@ -138,6 +138,30 @@ impl TryFrom<&[String]> for Monkey {
     }
 }
 
+fn simulate(rounds: usize, mut monkeys: Vec<Monkey>, reducer: impl Fn(i64) -> i64) -> i64 {
+    let num_monkeys = monkeys.len();
+    let mut seen = vec![0i64; num_monkeys];
+
+    for _ in 0..rounds {
+        for midx in 0..num_monkeys {
+            while !monkeys[midx].items.is_empty() {
+                seen[midx] += 1;
+                let worry_level = monkeys[midx].items.pop_front().unwrap();
+                let worry_level = monkeys[midx].operation.apply(worry_level);
+                let worry_level = reducer(worry_level);
+                let nidx = if worry_level % monkeys[midx].test == 0 {
+                    monkeys[midx].if_true
+                } else {
+                    monkeys[midx].if_false
+                };
+                monkeys[nidx].items.push_back(worry_level);
+            }
+        }
+    }
+    seen.sort();
+    seen.iter().rev().take(2).cloned().fold(1, i64::mul)
+}
+
 pub(super) fn solve(r: impl io::BufRead) -> io::Result<Solution> {
     let monkeys: Vec<Monkey> = r
         .lines()
@@ -145,67 +169,10 @@ pub(super) fn solve(r: impl io::BufRead) -> io::Result<Solution> {
         .chunks(7)
         .map(|c| c.try_into().unwrap())
         .collect();
-    let num_monkeys = monkeys.len();
 
-    let part1 = {
-        let mut monkeys = monkeys.clone();
-        let mut seen = vec![0i64; num_monkeys];
+    let test_mul = monkeys.iter().map(|m| m.test).reduce(i64::mul).unwrap();
 
-        for _ in 0..20 {
-            for midx in 0..num_monkeys {
-                while !monkeys[midx].items.is_empty() {
-                    seen[midx] += 1;
-                    let worry_level = monkeys[midx].items.pop_front().unwrap();
-                    let worry_level = monkeys[midx].operation.apply(worry_level);
-                    let worry_level = worry_level / 3;
-                    let nidx = if worry_level % monkeys[midx].test == 0 {
-                        monkeys[midx].if_true
-                    } else {
-                        monkeys[midx].if_false
-                    };
-                    monkeys[nidx].items.push_back(worry_level);
-                }
-            }
-        }
-        seen.sort();
-        seen.iter()
-            .rev()
-            .take(2)
-            .cloned()
-            .fold(1, i64::mul)
-            .to_string()
-    };
-
-    let part2 = {
-        let mut monkeys = monkeys.clone();
-        let mut seen = vec![0i64; num_monkeys];
-        let reducer = monkeys.iter().map(|m| m.test).reduce(i64::mul).unwrap();
-
-        for _ in 0..10000 {
-            for midx in 0..num_monkeys {
-                while !monkeys[midx].items.is_empty() {
-                    seen[midx] += 1;
-                    let worry_level = monkeys[midx].items.pop_front().unwrap();
-                    let worry_level = monkeys[midx].operation.apply(worry_level);
-                    let nidx = if worry_level % monkeys[midx].test == 0 {
-                        monkeys[midx].if_true
-                    } else {
-                        monkeys[midx].if_false
-                    };
-                    monkeys[nidx].items.push_back(worry_level);
-                }
-            }
-            monkeys
-                .iter_mut()
-                .for_each(|m| m.items.iter_mut().for_each(|n| *n = *n % reducer));
-        }
-        seen.sort();
-        seen.iter()
-            .rev()
-            .take(2)
-            .cloned()
-            .fold(1, i64::mul)
-            .to_string()
-    };
+    let part1 = simulate(20, monkeys.clone(), |n| n / 3).to_string();
+    let part2 = simulate(10000, monkeys.clone(), |n| n % test_mul).to_string();
     Ok(Solution { part1, part2 })
 }
