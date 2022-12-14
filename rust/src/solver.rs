@@ -14,6 +14,7 @@ mod day09;
 mod day10;
 mod day11;
 mod day12;
+mod day13;
 
 pub struct Solver(i32);
 
@@ -36,6 +37,7 @@ impl Solver {
             10 => day10::solve(r),
             11 => day11::solve(r),
             12 => day12::solve(r),
+            13 => day13::solve(r),
             _ => todo!(),
         }
     }
